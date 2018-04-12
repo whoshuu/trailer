@@ -1,6 +1,8 @@
-hash: 7ebdf561f0688681bfd5b8676365168d7fd353c098cf0a2ce6ca27193fe815a0
-updated: 2018-04-11T14:55:22.75110104-07:00
+hash: b9cbbd45a20e997e34b66ad8b8a7ec38f569487e296ec7f4409e5f9c2bd3db68
+updated: 2018-04-12T11:43:57.707815347-07:00
 imports:
 - name: github.com/educlos/testrail
   version: 0142f42e9ad1dcdc0fcecf5d0fd62376f1b8ec16
+- name: github.com/urfave/cli
+  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 testImports: []
