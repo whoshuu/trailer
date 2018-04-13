@@ -2,5 +2,18 @@ package: github.com/whoshuu/trailer
 import:
 - package: github.com/educlos/testrail
   version: 0142f42e9ad1dcdc0fcecf5d0fd62376f1b8ec16
+- package: github.com/onsi/ginkgo
+  version: 68f622cf9b05e245b580cda6debc2b1bd3094c97
+  subpackages:
+  - config
+  - reporters
+  - reporters/stenographer
+  - reporters/stenographer/support/go-colorable
+  - reporters/stenographer/support/go-isatty
+  - types
 - package: github.com/urfave/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+- package: golang.org/x/sys
+  version: f6f352972f061230a99fbf49d1eb8073ebdb36cb
+  subpackages:
+  - unix
