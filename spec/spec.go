@@ -35,7 +35,7 @@ type Updates struct {
 	ResultMap map[int]Update
 }
 
-func (u *Updates) AddSuites(suites JUnitTestSuites) error {
+func (u *Updates) AddSuites(comment string, suites JUnitTestSuites) error {
 	for _, suite := range suites.Suites {
 		for _, test := range suite.TestCases {
 			fmt.Printf("  %v\n", test.Name)
@@ -57,7 +57,7 @@ func (u *Updates) AddSuites(suites JUnitTestSuites) error {
 				}
 				if test.FailureMessage != nil {
 					update.Status = Failed
-					update.Message = (*test.FailureMessage).Message
+					update.Message = fmt.Sprintf("%s\n\n%s", comment, (*test.FailureMessage).Message)
 				}
 				i, err := strconv.Atoi(id[1])
 				if err != nil {

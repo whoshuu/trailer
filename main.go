@@ -23,6 +23,7 @@ func main() {
 		verbose bool
 		dry     bool
 		runID   int
+		comment string
 	)
 
 	app := cli.NewApp()
@@ -52,7 +53,11 @@ func main() {
 					Usage:       "TestRail run ID to target for the update",
 					Destination: &runID,
 				},
-				// run id flag
+				cli.StringFlag{
+					Name:        "comment, c",
+					Usage:       "prefix to use when commenting on TestRail updates",
+					Destination: &comment,
+				},
 			},
 			ArgsUsage: "[input *.xml files...]",
 			Action: func(c *cli.Context) error {
@@ -74,7 +79,7 @@ func main() {
 					suites.Suites = append(suites.Suites, newSuites...)
 				}
 
-				updates.AddSuites(suites)
+				updates.AddSuites(comment, suites)
 
 				results, err := updates.CreatePayload()
 				if err != nil {
