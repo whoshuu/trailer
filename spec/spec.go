@@ -38,10 +38,9 @@ type Updates struct {
 func (u *Updates) AddSuites(comment string, suites JUnitTestSuites) error {
 	for _, suite := range suites.Suites {
 		for _, test := range suite.TestCases {
-			fmt.Printf("  %v\n", test.Name)
 			regex, err := regexp.Compile("TestRailC([\\d]+)")
 			if err != nil {
-				return fmt.Errorf("failed to compile test case regex")
+				return fmt.Errorf("failed to compile test case regex: %s", err)
 			}
 			ids := regex.FindAllStringSubmatch(test.Name, -1)
 			for _, id := range ids {
