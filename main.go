@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/educlos/testrail"
 	"github.com/urfave/cli"
@@ -22,6 +25,7 @@ func main() {
 	var (
 		verbose bool
 		dry     bool
+		retries int
 		runID   int
 		comment string
 	)
@@ -47,6 +51,12 @@ func main() {
 					Name:        "dry, d",
 					Usage:       "print readable results without updating TestRail run",
 					Destination: &dry,
+				},
+				cli.IntFlag{
+					Name:        "ignore-failures, i",
+					Usage:       "ignore failures and retry this number of times",
+					Destination: &retries,
+					Value:       1,
 				},
 				cli.IntFlag{
 					Name:        "run-id, r",
@@ -81,20 +91,45 @@ func main() {
 
 				updates.AddSuites(comment, suites)
 
-				results, err := updates.CreatePayload()
-				if err != nil {
-					log.Fatalf(fmt.Sprintf("Failed to create results payload: %s", err))
-				}
-
 				if !dry {
 					client := testrail.NewClient("https://docker.testrail.com", username, token)
-					r, err := client.AddResultsForCases(runID, results)
-					if err != nil {
-						log.Fatalf(fmt.Sprintf("Failed to upload test results to TestRail: %s", err))
-					}
+					for i := 0; i < retries; i++ {
+						results, err := updates.CreatePayload()
+						if err != nil {
+							log.Fatalf(fmt.Sprintf("Failed to create results payload: %s", err))
+						}
+						r, err := client.AddResultsForCases(runID, results)
+						if err != nil {
+							errString := err.Error()
+							if strings.Contains(errString, "400 Bad Request") {
+								regex, err := regexp.Compile("case C([\\d]+) unknown")
+								if err != nil {
+									log.Fatalf("failed to compile test case regex: %s", err)
+								}
+								ids := regex.FindAllStringSubmatch(errString, -1)
+								for _, id := range ids {
+									if len(id) != 2 {
+										log.Fatalf("failed to parse case ID")
+									}
+									caseID, err := strconv.Atoi(id[1])
+									if err != nil {
+										log.Fatalf("failed to convert case ID to integer: %s", err)
+									}
+									updates.RemoveResult(caseID)
+								}
+							} else {
+								log.Fatalf(fmt.Sprintf("Failed to upload test results to TestRail: %s", err))
+							}
+						}
 
-					for _, res := range r {
-						fmt.Printf("%+v\n", res)
+						if len(r) == 0 {
+							log.Print("No results uploaded")
+						} else {
+							for _, res := range r {
+								fmt.Printf("%+v\n", res)
+							}
+							break
+						}
 					}
 				}
 

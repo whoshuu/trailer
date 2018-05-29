@@ -97,3 +97,7 @@ func (u *Updates) CreatePayload() (testrail.SendableResultsForCase, error) {
 
 	return results, nil
 }
+
+func (u *Updates) RemoveResult(i int) {
+	delete(u.ResultMap, i)
+}
