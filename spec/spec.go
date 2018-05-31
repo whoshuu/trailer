@@ -62,6 +62,12 @@ func (u *Updates) AddSuites(comment string, suites JUnitTestSuites) error {
 				if err != nil {
 					return fmt.Errorf("failed to convert case ID to integer")
 				}
+				if r, ok := u.ResultMap[i]; ok {
+					if r.Status == Failed {
+						continue
+					}
+				}
+
 				u.ResultMap[i] = update
 			}
 		}
