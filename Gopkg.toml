@@ -37,5 +37,9 @@
   name = "github.com/onsi/ginkgo"
   revision = "68f622cf9b05e245b580cda6debc2b1bd3094c97"
 
+[[constraint]]
+  name = "gopkg.in/yaml.v2"
+  revision = "a3f3340b5840cee44f372bddb5880fcbc419b46a"
+
 [prune]
   unused-packages = true
